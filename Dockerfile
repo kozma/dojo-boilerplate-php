@@ -1,9 +1,7 @@
-FROM php:alpine
+FROM php:7.4-cli-alpine
 
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-RUN php composer-setup.php
-RUN php -r "unlink('composer-setup.php');"
-RUN mv composer.phar /usr/local/bin/composer
+RUN curl -Ss https://getcomposer.org/installer | php && \
+    mv composer.phar /usr/bin/composer
 
 ADD . /app
 VOLUME /app
