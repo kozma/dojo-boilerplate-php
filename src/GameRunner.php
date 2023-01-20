@@ -5,8 +5,6 @@ use App\Logging\StdoutLogger;
 
 include __DIR__ . '/../bootstrap.php';
 
-$notAWinner;
-
 $aGame = new Game(new StdoutLogger());
 
 $aGame->add("Chet");
