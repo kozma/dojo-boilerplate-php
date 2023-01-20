@@ -125,6 +125,99 @@ class GameTest extends TestCase
         $this->assertCount(49, $this->game->getQuestionsForCategory('Rock'));
     }
 
+    /**
+     * @test
+     * @dataProvider evenRolls
+     */
+    public function roll_PlayerIsInPrisonRollsEven_PositionDoesNotChange($roll)
+    {
+        $player = $this->givenAPlayerAtPosition(4);
+        $this->givenThePlayerIsInPrison($player);
+        $this->givenTheCurrentPlayerIs($player);
+
+        $this->game->roll($roll);
+
+        $this->assertEquals(4, $this->game->places[$player->getIndex()]);
+    }
+
+    /**
+     * @test
+     * @dataProvider evenRolls
+     */
+    public function roll_PlayerIsInPrisonRollsEven_NoQuestionConsumed($roll)
+    {
+        $player = $this->givenAPlayerAtPosition(4);
+        $this->givenThePlayerIsInPrison($player);
+        $this->givenTheCurrentPlayerIs($player);
+
+        $this->game->roll($roll);
+
+        $this->assertCount(50, $this->game->getQuestionsForCategory('Pop'));
+        $this->assertCount(50, $this->game->getQuestionsForCategory('Rock'));
+        $this->assertCount(50, $this->game->getQuestionsForCategory('Science'));
+        $this->assertCount(50, $this->game->getQuestionsForCategory('Sports'));
+    }
+
+    /**
+     * @test
+     * @dataProvider oddRolls
+     */
+    public function roll_PlayerIsInPrisonRollsOdd_PositionAdvances($roll)
+    {
+        $player = $this->givenAPlayerAtPosition(4);
+        $this->givenThePlayerIsInPrison($player);
+        $this->givenTheCurrentPlayerIs($player);
+
+        $this->game->roll($roll);
+
+        $this->assertEquals(4 + $roll, $this->game->places[$player->getIndex()]);
+    }
+
+    /**
+     * @test
+     * @dataProvider oddRolls
+     */
+    public function roll_PlayerIsInPrisonRollsOddThatCrossesFinishLine_PositionRollsOver($roll)
+    {
+        $player = $this->givenAPlayerAtPosition(11);
+        $this->givenThePlayerIsInPrison($player);
+        $this->givenTheCurrentPlayerIs($player);
+
+        $this->game->roll($roll);
+
+        $this->assertEquals($roll - 1, $this->game->places[$player->getIndex()]);
+    }
+
+    /**
+     * @test
+     * @dataProvider oddRollsWithCategories
+     */
+    public function roll_PlayerIsInPrisonRollsOdd_QuestionConsumed($roll, $expectedCategory)
+    {
+        $player = $this->givenAPlayerAtPosition(0);
+        $this->givenThePlayerIsInPrison($player);
+        $this->givenTheCurrentPlayerIs($player);
+
+        $this->game->roll($roll);
+
+        $this->assertCount(49, $this->game->getQuestionsForCategory($expectedCategory));
+    }
+
+    public function evenRolls(): array
+    {
+        return [[2], [4], [6]];
+    }
+
+    public function oddRolls(): array
+    {
+        return [[1], [3], [5]];
+    }
+
+    public function oddRollsWithCategories(): array
+    {
+        return [[1, 'Science'], [3, 'Rock'], [5, 'Science']];
+    }
+
     private function assertPlayerState(
         string $expectedName,
         int $playerNumber,
@@ -151,5 +244,10 @@ class GameTest extends TestCase
     private function givenTheCurrentPlayerIs(Player $player)
     {
         $this->game->currentPlayer = $player->getIndex();
+    }
+
+    private function givenThePlayerIsInPrison(Player $player)
+    {
+        $this->game->inPenaltyBox[$player->getIndex()] = true;
     }
 }
