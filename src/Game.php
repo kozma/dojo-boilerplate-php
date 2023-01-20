@@ -174,13 +174,13 @@ class Game
                     . " Gold Coins."
                 );
 
-                $winner = $this->didPlayerWin();
+                $notAWinner = $this->didPlayerNotWin();
                 $this->currentPlayer++;
                 if ($this->currentPlayer == count($this->players)) {
                     $this->currentPlayer = 0;
                 }
 
-                return $winner;
+                return $notAWinner;
             } else {
                 $this->currentPlayer++;
                 if ($this->currentPlayer == count($this->players)) {
@@ -198,13 +198,13 @@ class Game
                 . " Gold Coins."
             );
 
-            $winner = $this->didPlayerWin();
+            $notAWinner = $this->didPlayerNotWin();
             $this->currentPlayer++;
             if ($this->currentPlayer == count($this->players)) {
                 $this->currentPlayer = 0;
             }
 
-            return $winner;
+            return $notAWinner;
         }
     }
 
@@ -221,7 +221,7 @@ class Game
         return true;
     }
 
-    function didPlayerWin()
+    function didPlayerNotWin()
     {
         return !($this->purses[$this->currentPlayer] == 6);
     }
