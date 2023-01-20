@@ -12,5 +12,11 @@ build: ## Build the image
 ssh: ## Start a shell in the container
 	docker-compose run docker-php sh
 
+up: ## Start a container that keeps running so PHPStorm can connect to it to quickly run tests
+	docker-compose run -d docker-php sh -c "while true; do sleep 1; done"
+
+down: ## Stop container
+	docker-compose down
+
 test: ## Run tests
 	docker-compose run docker-php sh -c "./vendor/bin/phpunit --colors=always"
