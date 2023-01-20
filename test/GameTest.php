@@ -218,6 +218,203 @@ class GameTest extends TestCase
         return [[1, 'Science'], [3, 'Rock'], [5, 'Science']];
     }
 
+    /** @test */
+    public function wasCorrectlyAnswered_NotInPrison_PlayerEarnsAGold()
+    {
+        $player = $this->givenAPlayerAtPosition(0);
+        $this->givenTheCurrentPlayerIs($player);
+
+        $this->game->wasCorrectlyAnswered();
+
+        $this->assertEquals(1, $this->game->purses[$player->getIndex()]);
+    }
+
+    /** @test */
+    public function wasCorrectlyAnswered_NotInPrison_CurrentPlayerAdvances()
+    {
+        $player = $this->givenAPlayerAtPosition(0);
+        $otherPlayer = $this->givenAPlayerAtPosition(0);
+        $this->givenTheCurrentPlayerIs($player);
+
+        $this->game->wasCorrectlyAnswered();
+
+        $this->assertEquals($otherPlayer->getIndex(), $this->game->currentPlayer);
+    }
+
+    /** @test */
+    public function wasCorrectlyAnswered_LastPlayerInRoundNotInPrison_FirstPlayerBecomesCurrent()
+    {
+        $firstPlayer = $this->givenAPlayerAtPosition(0);
+        $player = $this->givenAPlayerAtPosition(0);
+        $this->givenTheCurrentPlayerIs($player);
+
+        $this->game->wasCorrectlyAnswered();
+
+        $this->assertEquals($firstPlayer->getIndex(), $this->game->currentPlayer);
+    }
+
+    /** @test */
+    public function wasCorrectlyAnswered_InPrisonAndRolledEven_PlayerDoesNotEarnGold()
+    {
+        $player = $this->givenAPlayerAtPosition(0);
+        $this->givenThePlayerIsInPrison($player);
+        $this->givenTheCurrentPlayerIs($player);
+        $this->game->roll(2);
+
+        $this->game->wasCorrectlyAnswered();
+
+        $this->assertEquals(0, $this->game->purses[$player->getIndex()]);
+    }
+
+    /** @test */
+    public function wasCorrectlyAnswered_InPrisonAndRolledOdd_PlayerEarnsGold()
+    {
+        $player = $this->givenAPlayerAtPosition(0);
+        $this->givenThePlayerIsInPrison($player);
+        $this->givenTheCurrentPlayerIs($player);
+        $this->game->roll(3);
+
+        $this->game->wasCorrectlyAnswered();
+
+        $this->assertEquals(1, $this->game->purses[$player->getIndex()]);
+    }
+
+    /** @test */
+    public function wasCorrectlyAnswered_InPrisonAndRolledOdd_CurrentPlayerAdvances()
+    {
+        $player = $this->givenAPlayerAtPosition(0);
+        $otherPlayer = $this->givenAPlayerAtPosition(0);
+        $this->givenThePlayerIsInPrison($player);
+        $this->givenTheCurrentPlayerIs($player);
+        $this->game->roll(3);
+
+        $this->game->wasCorrectlyAnswered();
+
+        $this->assertEquals($otherPlayer->getIndex(), $this->game->currentPlayer);
+    }
+
+    /** @test */
+    public function wasCorrectlyAnswered_LastPlayerInPrisonAndRolledOdd_FirstPlayerBecomesCurrent()
+    {
+        $firstPlayer = $this->givenAPlayerAtPosition(0);
+        $player = $this->givenAPlayerAtPosition(0);
+        $this->givenThePlayerIsInPrison($player);
+        $this->givenTheCurrentPlayerIs($player);
+        $this->game->roll(3);
+
+        $this->game->wasCorrectlyAnswered();
+
+        $this->assertEquals($firstPlayer->getIndex(), $this->game->currentPlayer);
+    }
+
+    /** @test */
+    public function wasCorrectlyAnswered_InPrisonAndRolledEven_CurrentPlayerAdvances()
+    {
+        $player = $this->givenAPlayerAtPosition(0);
+        $otherPlayer = $this->givenAPlayerAtPosition(0);
+        $this->givenThePlayerIsInPrison($player);
+        $this->givenTheCurrentPlayerIs($player);
+        $this->game->roll(2);
+
+        $this->game->wasCorrectlyAnswered();
+
+        $this->assertEquals($otherPlayer->getIndex(), $this->game->currentPlayer);
+    }
+
+    /** @test */
+    public function wasCorrectlyAnswered_LastPlayerInPrisonAndRolledEven_FirstPlayerBecomesCurrent()
+    {
+        $firstPlayer = $this->givenAPlayerAtPosition(0);
+        $player = $this->givenAPlayerAtPosition(0);
+        $this->givenThePlayerIsInPrison($player);
+        $this->givenTheCurrentPlayerIs($player);
+        $this->game->roll(2);
+
+        $this->game->wasCorrectlyAnswered();
+
+        $this->assertEquals($firstPlayer->getIndex(), $this->game->currentPlayer);
+    }
+
+    /** @test */
+    public function wasCorrectlyAnswered_NotInPrisonWith4Golds_NotAWinner()
+    {
+        $player = $this->givenAPlayerAtPosition(0);
+        $this->givenPlayerPurseIs($player, 4);
+        $this->givenTheCurrentPlayerIs($player);
+
+        $currentPlayerDidNotWin = $this->game->wasCorrectlyAnswered();
+
+        $this->assertEquals(true, $currentPlayerDidNotWin);
+    }
+
+    /** @test */
+    public function wasCorrectlyAnswered_NotInPrisonWith5Golds_PlayerWins()
+    {
+        $player = $this->givenAPlayerAtPosition(0);
+        $this->givenPlayerPurseIs($player, 5);
+        $this->givenTheCurrentPlayerIs($player);
+
+        $currentPlayerDidNotWin = $this->game->wasCorrectlyAnswered();
+
+        $this->assertEquals(false, $currentPlayerDidNotWin);
+    }
+
+    /** @test */
+    public function wasCorrectlyAnswered_InPrisonWith4GoldsAndOddRoll_NotAWinner()
+    {
+        $player = $this->givenAPlayerAtPosition(0);
+        $this->givenThePlayerIsInPrison($player);
+        $this->givenPlayerPurseIs($player, 4);
+        $this->givenTheCurrentPlayerIs($player);
+        $this->game->roll(5);
+
+        $currentPlayerDidNotWin = $this->game->wasCorrectlyAnswered();
+
+        $this->assertEquals(true, $currentPlayerDidNotWin);
+    }
+
+    /** @test */
+    public function wasCorrectlyAnswered_InPrisonWith5GoldsAndOddRoll_PlayerWins()
+    {
+        $player = $this->givenAPlayerAtPosition(0);
+        $this->givenThePlayerIsInPrison($player);
+        $this->givenPlayerPurseIs($player, 5);
+        $this->givenTheCurrentPlayerIs($player);
+        $this->game->roll(5);
+
+        $currentPlayerDidNotWin = $this->game->wasCorrectlyAnswered();
+
+        $this->assertEquals(false, $currentPlayerDidNotWin);
+    }
+
+    /** @test */
+    public function wasCorrectlyAnswered_InPrisonWith4GoldsAndEvenRoll_NotAWinner()
+    {
+        $player = $this->givenAPlayerAtPosition(0);
+        $this->givenThePlayerIsInPrison($player);
+        $this->givenPlayerPurseIs($player, 4);
+        $this->givenTheCurrentPlayerIs($player);
+        $this->game->roll(2);
+
+        $currentPlayerDidNotWin = $this->game->wasCorrectlyAnswered();
+
+        $this->assertEquals(true, $currentPlayerDidNotWin);
+    }
+
+    /** @test */
+    public function wasCorrectlyAnswered_InPrisonWith5GoldsAndEvenRoll_NotAWinner()
+    {
+        $player = $this->givenAPlayerAtPosition(0);
+        $this->givenThePlayerIsInPrison($player);
+        $this->givenPlayerPurseIs($player, 5);
+        $this->givenTheCurrentPlayerIs($player);
+        $this->game->roll(2);
+
+        $currentPlayerDidNotWin = $this->game->wasCorrectlyAnswered();
+
+        $this->assertEquals(true, $currentPlayerDidNotWin);
+    }
+
     private function assertPlayerState(
         string $expectedName,
         int $playerNumber,
@@ -249,5 +446,10 @@ class GameTest extends TestCase
     private function givenThePlayerIsInPrison(Player $player)
     {
         $this->game->inPenaltyBox[$player->getIndex()] = true;
+    }
+
+    private function givenPlayerPurseIs(Player $player, int $golds)
+    {
+        $this->game->purses[$player->getIndex()] = $golds;
     }
 }
