@@ -1,5 +1,7 @@
 <?php
 
+use App\Game;
+
 include __DIR__ . '/Game.php';
 
 $notAWinner;
@@ -19,4 +21,3 @@ do {
         $notAWinner = $aGame->wasCorrectlyAnswered();
     }
 } while ($notAWinner);
-  

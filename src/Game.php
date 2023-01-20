@@ -1,5 +1,9 @@
 <?php
 
+namespace App;
+
+use InvalidArgumentException;
+
 function echoln($string)
 {
     echo $string . "\n";
@@ -220,5 +224,16 @@ class Game
     function didPlayerWin()
     {
         return !($this->purses[$this->currentPlayer] == 6);
+    }
+
+    public function getQuestionsForCategory(string $category): array
+    {
+        return match ($category) {
+            'Pop' => $this->popQuestions,
+            'Rock' => $this->rockQuestions,
+            'Sports' => $this->sportsQuestions,
+            'Science' => $this->scienceQuestions,
+            default => throw new InvalidArgumentException("Unknown category: '$category'"),
+        };
     }
 }
