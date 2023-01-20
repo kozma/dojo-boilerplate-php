@@ -1,4 +1,7 @@
-docker-php:
-  build: .
-  volumes:
-    - .:/app
+version: "3"
+
+services:
+  docker-php:
+    build: .
+    volumes:
+      - .:/app

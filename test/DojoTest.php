@@ -7,18 +7,15 @@ use PHPUnit\Framework\TestCase;
 
 class DojoTest extends TestCase
 {
-    /**
-     * @var Dojo
-     */
-    private $dojo;
+    private Dojo $dojo;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->dojo = new Dojo();
     }
 
-    public function test_shouldReturnTrue()
+    public function test_shouldReturnTrue(): void
     {
         $this->assertTrue($this->dojo->test());
     }

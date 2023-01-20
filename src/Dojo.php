@@ -4,7 +4,7 @@ namespace App;
 
 class Dojo
 {
-    public function test()
+    public function test(): bool
     {
         return true;
     }
