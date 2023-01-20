@@ -48,7 +48,7 @@ class GameTest extends TestCase
         $this->game->add('Pipi');
         
         $this->assertEquals(1, $this->game->howManyPlayers());
-        $this->assertPlayerState(0, 0, 0, false, 'Pipi');
+        $this->assertPlayerState('Pipi', 0, 0, 0, false);
     }
 
     /** @test */
@@ -58,16 +58,17 @@ class GameTest extends TestCase
         $this->game->add('Maci');
 
         $this->assertEquals(2, $this->game->howManyPlayers());
-        $this->assertPlayerState(1, 0, 0, false, 'Maci');
+        $this->assertPlayerState('Maci', 1, 0, 0, false);
     }
 
     private function assertPlayerState(
+        string $expectedName,
         int $playerNumber,
         int $expectedPlace,
         int $expectedGolds,
-        bool $expectedInPenaltyBox,
-        string $expectedName
+        bool $expectedInPenaltyBox
     ): void {
+        $this->assertEquals($expectedName, $this->game->players[$playerNumber]);
         $this->assertEquals($expectedPlace, $this->game->places[$playerNumber]);
         $this->assertEquals($expectedGolds, $this->game->purses[$playerNumber]);
         $this->assertEquals($expectedInPenaltyBox, $this->game->inPenaltyBox[$playerNumber]);
