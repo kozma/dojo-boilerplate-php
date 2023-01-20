@@ -62,6 +62,35 @@ class GameTest extends TestCase
         $this->assertPlayerState('Maci', 1, 0, 0, false);
     }
 
+    /**
+     * @test
+     * @dataProvider positionToCategoryMapping
+     */
+    public function currentCategory_PlayerPlacesPassed_RoundRobinCategoriesReturned($playerPlace, $expectedCategory)
+    {
+        $this->game->currentPlayer = 0;
+        $this->game->places[$this->game->currentPlayer] = $playerPlace;
+        $this->assertEquals($expectedCategory, $this->game->currentCategory());
+    }
+
+    public function positionToCategoryMapping(): array
+    {
+        return [
+            [0,'Pop'],
+            [1,'Science'],
+            [2,'Sports'],
+            [3,'Rock'],
+            [4,'Pop'],
+            [5,'Science'],
+            [6,'Sports'],
+            [7,'Rock'],
+            [8,'Pop'],
+            [9,'Science'],
+            [10,'Sports'],
+            [11,'Rock'],
+        ];
+    }
+
     private function assertPlayerState(
         string $expectedName,
         int $playerNumber,
