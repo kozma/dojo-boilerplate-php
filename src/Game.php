@@ -7,6 +7,7 @@ use InvalidArgumentException;
 
 class Game
 {
+    public const LAP_LENGTH = 12;
     var $players;
     var $places;
     var $purses;

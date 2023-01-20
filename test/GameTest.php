@@ -2,6 +2,7 @@
 
 use App\Game;
 use App\Logging\NullLogger;
+use App\Player;
 use PHPUnit\Framework\TestCase;
 
 class GameTest extends TestCase
@@ -91,6 +92,39 @@ class GameTest extends TestCase
         ];
     }
 
+    /** @test */
+    public function roll_PlayerIsNotInPrisonStaysInTheSameLap_PositionAdvancesByRolledNumber()
+    {
+        $player = $this->givenAPlayerAtPosition(4);
+        $this->givenTheCurrentPlayerIs($player);
+
+        $this->game->roll(3);
+
+        $this->assertEquals(7, $this->game->places[$player->getIndex()]);
+    }
+
+    /** @test */
+    public function roll_PlayerIsNotInPrisonStaysRollsOverToNextLap_PositionRollsOver()
+    {
+        $player = $this->givenAPlayerAtPosition(10);
+        $this->givenTheCurrentPlayerIs($player);
+
+        $this->game->roll(3);
+
+        $this->assertEquals(1, $this->game->places[$player->getIndex()]);
+    }
+
+    /** @test */
+    public function roll_PlayerIsNotInPrison_QuestionConsumedFromCategoryOfDestinationSquare()
+    {
+        $player = $this->givenAPlayerAtPosition(4);
+        $this->givenTheCurrentPlayerIs($player);
+
+        $this->game->roll(3);
+
+        $this->assertCount(49, $this->game->getQuestionsForCategory('Rock'));
+    }
+
     private function assertPlayerState(
         string $expectedName,
         int $playerNumber,
@@ -102,5 +136,20 @@ class GameTest extends TestCase
         $this->assertEquals($expectedPlace, $this->game->places[$playerNumber]);
         $this->assertEquals($expectedGolds, $this->game->purses[$playerNumber]);
         $this->assertEquals($expectedInPenaltyBox, $this->game->inPenaltyBox[$playerNumber]);
+    }
+
+    private function givenAPlayerAtPosition(int $playerPosition): Player
+    {
+        $player = new Player('Mici');
+        $player->advance($playerPosition);
+        $this->game->add($player->getName());
+        $player->setIndex($this->game->howManyPlayers() - 1);
+        $this->game->places[$player->getIndex()] = $player->getPosition();
+        return $player;
+    }
+
+    private function givenTheCurrentPlayerIs(Player $player)
+    {
+        $this->game->currentPlayer = $player->getIndex();
     }
 }
