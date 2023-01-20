@@ -1,17 +1,18 @@
 <?php
 
 use App\Game;
+use App\Logging\NullLogger;
 use PHPUnit\Framework\TestCase;
 
 class GameTest extends TestCase
 {
     private Game $game;
-    
+
     protected function setUp(): void
     {
         parent::setUp();
-        
-        $this->game = new Game();
+
+        $this->game = new Game(new NullLogger());
     }
 
     /** @test */
@@ -46,7 +47,7 @@ class GameTest extends TestCase
     public function add_EmptyGame_OnePlayerAddedAtPositionZero(): void
     {
         $this->game->add('Pipi');
-        
+
         $this->assertEquals(1, $this->game->howManyPlayers());
         $this->assertPlayerState('Pipi', 0, 0, 0, false);
     }
